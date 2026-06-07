@@ -24,14 +24,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration - UPDATED WITH YOUR DETAILS
-BOT_TOKEN = "8996878557:AAFyZfHKd-0JxlCkimXvZTxCQMrXcuY0fXc"
+BOT_TOKEN = "8806055197:AAFM5IK3H3P2xd746nZyBCkQVzy7t5yeVfI"
 CHANNEL_USERNAME = "@rajamall_com"  # Your channel username
 CHANNEL_LINK = "https://t.me/rajamall_com"  # Your channel link
-ADMIN_IDS = [8559547390]  # Your admin ID
+ADMIN_IDS = [5888777479]  # Your admin ID
 REFERRAL_CREDITS = 5
 SEARCH_COST = 1
 
-# Database setup
+# Database setup (unchanged)
 class Database:
     def __init__(self):
         self.conn = sqlite3.connect('tracker_bot.db', check_same_thread=False)
@@ -209,7 +209,7 @@ class Database:
 
 db = Database()
 
-# API function
+# API function (unchanged)
 def fetch_data(number):
     try:
         url = f"https://exploitsindia.site/track/live.php?term={number}"
@@ -228,7 +228,7 @@ def fetch_data(number):
         logger.error(f"Error fetching data: {e}")
         return None
 
-# Check channel membership
+# Check channel membership (unchanged)
 async def check_membership(user_id, context) -> bool:
     try:
         chat_member = await context.bot.get_chat_member(chat_id=CHANNEL_USERNAME, user_id=user_id)
@@ -238,25 +238,25 @@ async def check_membership(user_id, context) -> bool:
         logger.error(f"Membership check error: {e}")
     return False
 
-# Main Menu Keyboard
+# Main Menu Keyboard - Enhanced with better icons
 def get_main_keyboard():
     keyboard = [
         [
-            InlineKeyboardButton("🔍 SEARCH NUMBER", callback_data="search"),
-            InlineKeyboardButton("💰 MY BALANCE", callback_data="balance")
+            InlineKeyboardButton("🔍 𝗦𝗘𝗔𝗥𝗖𝗛 𝗡𝗨𝗠𝗕𝗘𝗥", callback_data="search"),
+            InlineKeyboardButton("💰 𝗠𝗬 𝗕𝗔𝗟𝗔𝗡𝗖𝗘", callback_data="balance")
         ],
         [
-            InlineKeyboardButton("👥 REFER & EARN", callback_data="refer"),
-            InlineKeyboardButton("📊 LEADERBOARD", callback_data="leaderboard")
+            InlineKeyboardButton("👥 𝗥𝗘𝗙𝗘𝗥 & 𝗘𝗔𝗥𝗡", callback_data="refer"),
+            InlineKeyboardButton("🏆 𝗟𝗘𝗔𝗗𝗘𝗥𝗕𝗢𝗔𝗥𝗗", callback_data="leaderboard")
         ],
         [
-            InlineKeyboardButton("📜 HISTORY", callback_data="history"),
-            InlineKeyboardButton("ℹ️ HELP", callback_data="help")
+            InlineKeyboardButton("📜 𝗛𝗜𝗦𝗧𝗢𝗥𝗬", callback_data="history"),
+            InlineKeyboardButton("ℹ️ 𝗛𝗘𝗟𝗣", callback_data="help")
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
 
-# Start command
+# Start command - Enhanced UI
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
@@ -272,49 +272,50 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Check if banned
     if user_data and user_data.get('is_banned', 0) == 1:
-        await update.message.reply_text("❌ You are banned from using this bot!")
+        await update.message.reply_text("🚫 **⛔ 𝗔𝗖𝗖𝗘𝗦𝗦 𝗗𝗘𝗡𝗜𝗘𝗗 ⛔**\n\nYou have been banned from using this bot.\n\nContact admin for support.", parse_mode=ParseMode.MARKDOWN)
         return
     
     # Check if verified
     if user_data and user_data.get('is_verified', 0) == 1:
-        # Show main menu
+        # Show main menu with enhanced design
         menu_text = f"""
-🌟 **MAIN MENU** 🌟
+╔══════════════════════════╗
+║       🌟 𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨 🌟        ║
+╠══════════════════════════╣
+║ 👤 𝗨𝘀𝗲𝗿 : {user_data.get('first_name', 'User')[:20]}
+║ 💰 𝗖𝗿𝗲𝗱𝗶𝘁𝘀 : {user_data.get('credits', 5)}
+║ 🔍 𝗦𝗲𝗮𝗿𝗰𝗵𝗲𝘀 : {user_data.get('total_searches', 0)}
+║ 👥 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹𝘀 : {db.get_referrals(user_id)}
+╚══════════════════════════╝
 
-━━━━━━━━━━━━━━━━━━
-👤 **User:** {user_data.get('first_name', 'User')}
-💰 **Credits:** {user_data.get('credits', 5)}
-🔍 **Searches:** {user_data.get('total_searches', 0)}
-👥 **Referrals:** {db.get_referrals(user_id)}
-━━━━━━━━━━━━━━━━━━
-
-📌 **Choose an option below:**
+📌 𝗦𝗲𝗹𝗲𝗰𝘁 𝗮𝗻 𝗼𝗽𝘁𝗶𝗼𝗻 𝗯𝗲𝗹𝗼𝘄:
         """
         await update.message.reply_text(menu_text, parse_mode=ParseMode.MARKDOWN, reply_markup=get_main_keyboard())
         return
     
-    # Not verified - show verification screen
+    # Not verified - show verification screen with enhanced design
     verify_text = """
-🔐 **ACCESS RESTRICTED**
-
-━━━━━━━━━━━━━━━━━━
-⚠️ You must join our channel to use this bot!
-
-📌 **Steps:**
-1️⃣ Click the JOIN button below
-2️⃣ Join the channel
-3️⃣ Click VERIFY button
-━━━━━━━━━━━━━━━━━━
+╔══════════════════════════════╗
+║      🔐 𝗔𝗖𝗖𝗘𝗦𝗦 𝗥𝗘𝗦𝗧𝗥𝗜𝗖𝗧𝗘𝗗      ║
+╠══════════════════════════════╣
+║  ⚠️ You must join our channel  ║
+║     to use this bot!           ║
+╠══════════════════════════════╣
+║  📌 𝗦𝘁𝗲𝗽𝘀:                     ║
+║  1️⃣ Click JOIN button below    ║
+║  2️⃣ Join the channel           ║
+║  3️⃣ Click VERIFY button        ║
+╚══════════════════════════════╝
     """
     
     verify_keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📢 JOIN CHANNEL", url=CHANNEL_LINK)],
-        [InlineKeyboardButton("✅ VERIFY MEMBERSHIP", callback_data="verify")]
+        [InlineKeyboardButton("📢 𝗝𝗢𝗜𝗡 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url=CHANNEL_LINK)],
+        [InlineKeyboardButton("✅ 𝗩𝗘𝗥𝗜𝗙𝗬 𝗠𝗘𝗠𝗕𝗘𝗥𝗦𝗛𝗜𝗣", callback_data="verify")]
     ])
     
     await update.message.reply_text(verify_text, parse_mode=ParseMode.MARKDOWN, reply_markup=verify_keyboard)
 
-# Verify callback
+# Verify callback - Enhanced
 async def verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -327,31 +328,31 @@ async def verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.delete()
         
         menu_text = f"""
-✅ **VERIFICATION SUCCESSFUL!**
+╔══════════════════════════╗
+║   ✅ 𝗩𝗘𝗥𝗜𝗙𝗜𝗖𝗔𝗧𝗜𝗢𝗡 𝗦𝗨𝗖𝗖𝗘𝗦𝗦   ║
+╠══════════════════════════╣
+║    🌟 𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨 🌟          ║
+╠══════════════════════════╣
+║ 👤 𝗨𝘀𝗲𝗿 : {user_data.get('first_name', 'User')[:20]}
+║ 💰 𝗖𝗿𝗲𝗱𝗶𝘁𝘀 : {user_data.get('credits', 5)}
+║ 🔍 𝗦𝗲𝗮𝗿𝗰𝗵𝗲𝘀 : {user_data.get('total_searches', 0)}
+║ 👥 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹𝘀 : {db.get_referrals(user_id)}
+╚══════════════════════════╝
 
-🌟 **MAIN MENU** 🌟
-
-━━━━━━━━━━━━━━━━━━
-👤 **User:** {user_data.get('first_name', 'User')}
-💰 **Credits:** {user_data.get('credits', 5)}
-🔍 **Searches:** {user_data.get('total_searches', 0)}
-👥 **Referrals:** {db.get_referrals(user_id)}
-━━━━━━━━━━━━━━━━━━
-
-📌 **Choose an option below:**
+📌 𝗦𝗲𝗹𝗲𝗰𝘁 𝗮𝗻 𝗼𝗽𝘁𝗶𝗼𝗻 𝗯𝗲𝗹𝗼𝘄:
         """
         await query.message.reply_text(menu_text, parse_mode=ParseMode.MARKDOWN, reply_markup=get_main_keyboard())
     else:
         await query.message.reply_text(
-            "❌ **NOT VERIFIED!**\n\nPlease join the channel first.",
+            "❌ **𝗡𝗢𝗧 𝗩𝗘𝗥𝗜𝗙𝗜𝗘𝗗!**\n\nPlease join the channel first then click verify.",
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("📢 JOIN CHANNEL", url=CHANNEL_LINK)],
-                [InlineKeyboardButton("✅ VERIFY", callback_data="verify")]
+                [InlineKeyboardButton("📢 𝗝𝗢𝗜𝗡 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url=CHANNEL_LINK)],
+                [InlineKeyboardButton("✅ 𝗩𝗘𝗥𝗜𝗙𝗬", callback_data="verify")]
             ])
         )
 
-# Search callback
+# Search callback - Enhanced
 async def search_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -368,23 +369,34 @@ async def search_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if user_data.get('is_banned', 0) == 1:
-        await query.message.reply_text("❌ You are banned!")
+        await query.message.reply_text("🚫 You are banned!")
         return
     
     credits = user_data.get('credits', 0)
     if credits < SEARCH_COST:
         await query.message.reply_text(
-            f"❌ **Insufficient Credits!**\n\nYou have: {credits} credits\nNeed: {SEARCH_COST} credit per search\n\n👥 Invite friends to earn more credits!",
+            f"❌ **𝗜𝗡𝗦𝗨𝗙𝗙𝗜𝗖𝗜𝗘𝗡𝗧 𝗖𝗥𝗘𝗗𝗜𝗧𝗦!**\n\n"
+            f"╔══════════════════════════╗\n"
+            f"║ 💎 𝗬𝗼𝘂𝗿 𝗖𝗿𝗲𝗱𝗶𝘁𝘀 : {credits}\n"
+            f"║ 🔍 𝗖𝗼𝘀𝘁 𝗽𝗲𝗿 𝗦𝗲𝗮𝗿𝗰𝗵 : {SEARCH_COST}\n"
+            f"╚══════════════════════════╝\n\n"
+            f"👥 Invite friends to earn {REFERRAL_CREDITS} credits per referral!",
             parse_mode=ParseMode.MARKDOWN
         )
         return
     
     await query.message.reply_text(
-        "📱 **ENTER MOBILE NUMBER**\n\nSend me a 10-digit mobile number to track.\n\nExample: `9876543210`",
+        "📱 **𝗘𝗡𝗧𝗘𝗥 𝗠𝗢𝗕𝗜𝗟𝗘 𝗡𝗨𝗠𝗕𝗘𝗥**\n\n"
+        "┌─────────────────────┐\n"
+        "│ Send a 10-digit    │\n"
+        "│ mobile number to   │\n"
+        "│ track.             │\n"
+        "└─────────────────────┘\n\n"
+        "📌 𝗘𝘅𝗮𝗺𝗽𝗹𝗲: `9876543210`",
         parse_mode=ParseMode.MARKDOWN
     )
 
-# Balance callback
+# Balance callback - Enhanced
 async def balance_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -400,23 +412,23 @@ async def balance_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot_username = bot_info.username
     
     text = f"""
-💰 **MY BALANCE**
+╔══════════════════════════════╗
+║       💰 𝗠𝗬 𝗕𝗔𝗟𝗔𝗡𝗖𝗘 💰         ║
+╠══════════════════════════════╣
+║ 👤 𝗨𝘀𝗲𝗿 : @{user_data.get('username') or user_data.get('first_name', 'N/A')}
+║ 💎 𝗖𝗿𝗲𝗱𝗶𝘁𝘀 : {user_data.get('credits', 0)}
+║ 🔍 𝗧𝗼𝘁𝗮𝗹 𝗦𝗲𝗮𝗿𝗰𝗵𝗲𝘀 : {user_data.get('total_searches', 0)}
+║ 👥 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹𝘀 : {db.get_referrals(user_id)}
+╚══════════════════════════════╝
 
-━━━━━━━━━━━━━━━━━━
-👤 **Username:** @{user_data.get('username') or 'N/A'}
-💎 **Credits:** {user_data.get('credits', 0)}
-🔍 **Total Searches:** {user_data.get('total_searches', 0)}
-👥 **Referrals:** {db.get_referrals(user_id)}
-━━━━━━━━━━━━━━━━━━
-
-🔗 **Referral Link:**
+🔗 𝗬𝗼𝘂𝗿 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹 𝗟𝗶𝗻𝗸:
 `https://t.me/{bot_username}?start={user_id}`
 
-💡 Share link to earn {REFERRAL_CREDITS} credits per referral!
+💡 Share this link to earn {REFERRAL_CREDITS} credits per referral!
     """
     await query.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-# Refer callback
+# Refer callback - Enhanced
 async def refer_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -428,14 +440,14 @@ async def refer_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     link = f"https://t.me/{bot_username}?start={user_id}"
     
     text = f"""
-👥 **REFER & EARN**
+╔══════════════════════════════╗
+║      👥 𝗥𝗘𝗙𝗘𝗥 & 𝗘𝗔𝗥𝗡 👥        ║
+╠══════════════════════════════╣
+║ 🎁 𝗥𝗲𝘄𝗮𝗿𝗱 : {REFERRAL_CREDITS} credits/referral
+║ 👥 𝗬𝗼𝘂𝗿 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹𝘀 : {db.get_referrals(user_id)}
+╚══════════════════════════════╝
 
-━━━━━━━━━━━━━━━━━━
-🎁 **Reward:** {REFERRAL_CREDITS} credits per referral
-👥 **Your Referrals:** {db.get_referrals(user_id)}
-━━━━━━━━━━━━━━━━━━
-
-🔗 **Your Link:**
+🔗 𝗬𝗼𝘂𝗿 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹 𝗟𝗶𝗻𝗸:
 `{link}`
 
 📤 **Share this link with friends!**
@@ -444,7 +456,7 @@ async def refer_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     await query.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-# Leaderboard callback
+# Leaderboard callback - Enhanced
 async def leaderboard_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -452,17 +464,19 @@ async def leaderboard_callback(update: Update, context: ContextTypes.DEFAULT_TYP
     leaderboard = db.get_leaderboard(10)
     
     if leaderboard:
-        text = "🏆 **TOP 10 USERS**\n━━━━━━━━━━━━━━━━━━\n"
+        text = "🏆 **𝗧𝗢𝗣 𝟭𝟬 𝗨𝗦𝗘𝗥𝗦** 🏆\n\n"
         for i, (username, first_name, credits, searches) in enumerate(leaderboard, 1):
-            name = f"@{username}" if username else first_name
-            text += f"{i}. {name}\n   💎 {credits} credits | 🔍 {searches} searches\n"
-        text += "━━━━━━━━━━━━━━━━━━"
+            name = f"@{username}" if username else first_name[:15]
+            medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else "📌"
+            text += f"{medal} #{i} `{name}`\n"
+            text += f"   💎 {credits} credits | 🔍 {searches} searches\n\n"
+        text += "─────────────────────"
     else:
-        text = "No users found on leaderboard!"
+        text = "📊 No users found on leaderboard!"
     
     await query.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-# History callback
+# History callback - Enhanced
 async def history_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -471,54 +485,68 @@ async def history_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     history = db.get_search_history(user_id, 10)
     
     if history:
-        text = "📜 **RECENT SEARCHES**\n━━━━━━━━━━━━━━━━━━\n"
+        text = "📜 **𝗥𝗘𝗖𝗘𝗡𝗧 𝗦𝗘𝗔𝗥𝗖𝗛𝗘𝗦** 📜\n\n"
         for mobile, name, address, search_time in history:
             time = search_time[:16] if search_time else "Unknown"
-            text += f"📱 `{mobile}`\n👤 {name[:30]}\n📅 {time}\n━━━━━━━━━━━━━━━━━━\n"
+            text += f"┌─────────────────────┐\n"
+            text += f"│ 📱 `{mobile}`\n"
+            text += f"│ 👤 {name[:30]}\n"
+            text += f"│ 📅 {time}\n"
+            text += f"└─────────────────────┘\n\n"
     else:
-        text = "No search history found!"
+        text = "📭 No search history found!\n\nStart searching to see your history here."
     
     await query.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-# Help callback
+# Help callback - Enhanced
 async def help_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     text = """
-ℹ️ **HELP & INFORMATION**
+╔══════════════════════════════╗
+║       ℹ️ 𝗛𝗘𝗟𝗣 & 𝗜𝗡𝗙𝗢       ║
+╠══════════════════════════════╣
+║ 🔍 𝗦𝗲𝗮𝗿𝗰𝗵 𝗡𝘂𝗺𝗯𝗲𝗿           ║
+║    Track any mobile number   ║
+║    (1 credit per search)     ║
+╠══════════════════════════════╣
+║ 💰 𝗠𝘆 𝗕𝗮𝗹𝗮𝗻𝗰𝗲              ║
+║    Check your credits &      ║
+║    referral link             ║
+╠══════════════════════════════╣
+║ 👥 𝗥𝗲𝗳𝗲𝗿 & 𝗘𝗮𝗿𝗻             ║
+║    Get {REFERRAL_CREDITS} credits  ║
+║    per referral              ║
+╠══════════════════════════════╣
+║ 🏆 𝗟𝗲𝗮𝗱𝗲𝗿𝗯𝗼𝗮𝗿𝗱             ║
+║    Top users ranking         ║
+╠══════════════════════════════╣
+║ 📜 𝗛𝗶𝘀𝘁𝗼𝗿𝘆                 ║
+║    View your past searches   ║
+╠══════════════════════════════╣
+║ ⚙️ 𝗖𝗼𝗺𝗺𝗮𝗻𝗱𝘀:                ║
+║    /start - Main menu        ║
+║    /admin - Admin Panel      ║
+╠══════════════════════════════╣
+║ 💎 𝗖𝗿𝗲𝗱𝗶𝘁 𝗦𝘆𝘀𝘁𝗲𝗺:           ║
+║    • 5 free credits on signup║
+║    • 1 credit per search     ║
+║    • {REFERRAL_CREDITS} credits/referral ║
+╚══════════════════════════════╝
 
-━━━━━━━━━━━━━━━━━━
-🔍 **Search Number** - Track any mobile number (1 credit)
-💰 **My Balance** - Check your credits & referral link
-👥 **Refer & Earn** - Get 5 credits per referral
-📊 **Leaderboard** - Top users ranking
-📜 **History** - View your past searches
-
-━━━━━━━━━━━━━━━━━━
-⚙️ **Commands:**
-/start - Show main menu
-/admin - Admin Control Panel
-
-━━━━━━━━━━━━━━━━━━
-💎 **Credit System:**
-• 5 free credits on signup
-• 1 credit per search
-• 5 credits per referral
-
-━━━━━━━━━━━━━━━━━━
-📞 **Support:** @kingdemovideo
+📞 **Support:** @OfficalEarningZone
     """
     await query.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-# Handle mobile number input
+# Handle mobile number input - Enhanced
 async def handle_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     number = update.message.text.strip()
     
     # Validate number
     if not number.isdigit() or len(number) < 10:
-        await update.message.reply_text("❌ Invalid number! Please send a valid 10-digit mobile number.")
+        await update.message.reply_text("❌ **Invalid Number!**\n\nPlease send a valid 10-digit mobile number.\n\nExample: `9876543210`", parse_mode=ParseMode.MARKDOWN)
         return
     
     user_data = db.get_user(user_id)
@@ -531,15 +559,15 @@ async def handle_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if user_data.get('is_banned', 0) == 1:
-        await update.message.reply_text("❌ You are banned!")
+        await update.message.reply_text("🚫 You are banned!")
         return
     
     credits = user_data.get('credits', 0)
     if credits < SEARCH_COST:
-        await update.message.reply_text(f"❌ Insufficient credits! You have {credits} credits. Need {SEARCH_COST} credit per search.")
+        await update.message.reply_text(f"❌ **Insufficient credits!**\n\nYou have {credits} credits. Need {SEARCH_COST} credit per search.", parse_mode=ParseMode.MARKDOWN)
         return
     
-    processing = await update.message.reply_text("🔍 **SEARCHING...**\n\nPlease wait...")
+    processing = await update.message.reply_text("🔄 **𝗦𝗘𝗔𝗥𝗖𝗛𝗜𝗡𝗚...**\n\n┌─────────────────────┐\n│ 🔍 Scanning database│\n│ 📡 Fetching records │\n│ ⏳ Please wait...   │\n└─────────────────────┘", parse_mode=ParseMode.MARKDOWN)
     
     # Deduct credit
     if not db.deduct_credit(user_id):
@@ -554,120 +582,120 @@ async def handle_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_data = db.get_user(user_id)
         
         result_text = f"""
-✅ **SEARCH SUCCESSFUL!**
+╔══════════════════════════════╗
+║     ✅ 𝗦𝗘𝗔𝗥𝗖𝗛 𝗦𝗨𝗖𝗖𝗘𝗦𝗦𝗙𝗨𝗟 ✅     ║
+╠══════════════════════════════╣
+║ 👤 𝗡𝗮𝗺𝗲 : {data['name'][:35]}
+║ 📱 𝗠𝗼𝗯𝗶𝗹𝗲 : {data['mobile']}
+║ 📍 𝗔𝗱𝗱𝗿𝗲𝘀𝘀 : {data['address'][:35]}
+╠══════════════════════════════╣
+║ 💰 𝗥𝗲𝗺𝗮𝗶𝗻𝗶𝗻𝗴 𝗖𝗿𝗲𝗱𝗶𝘁𝘀 : {user_data.get('credits', 0)}
+║ 📊 𝗧𝗼𝘁𝗮𝗹 𝗦𝗲𝗮𝗿𝗰𝗵𝗲𝘀 : {user_data.get('total_searches', 0)}
+╚══════════════════════════════╝
 
-━━━━━━━━━━━━━━━━━━
-👤 **Name:** {data['name']}
-📱 **Mobile:** {data['mobile']}
-📍 **Address:** {data['address']}
-━━━━━━━━━━━━━━━━━━
-
-💰 **Remaining Credits:** {user_data.get('credits', 0)}
-📊 **Total Searches:** {user_data.get('total_searches', 0)}
-━━━━━━━━━━━━━━━━━━
-
-Use /start for main menu
+💡 Use /start for main menu
         """
         await processing.edit_text(result_text, parse_mode=ParseMode.MARKDOWN)
     else:
         # Refund credit
         db.give_credits(user_id, SEARCH_COST)
-        await processing.edit_text("❌ **NO DATA FOUND!**\n\nNo information available for this number.\nYour credit has been refunded.", parse_mode=ParseMode.MARKDOWN)
+        await processing.edit_text("❌ **𝗡𝗢 𝗗𝗔𝗧𝗔 𝗙𝗢𝗨𝗡𝗗!**\n\nNo information available for this number.\n\n💎 Your credit has been refunded.", parse_mode=ParseMode.MARKDOWN)
 
-# Admin commands (old ones kept for compatibility)
+# Admin commands - Enhanced UI for admin panel
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id not in ADMIN_IDS:
-        await update.message.reply_text("❌ Admin only!")
+        await update.message.reply_text("🚫 **Access Denied!**\n\nYou are not authorized to use this command.", parse_mode=ParseMode.MARKDOWN)
         return
     
     stats = db.get_statistics()
     await update.message.reply_text(f"""
-📊 **BOT STATISTICS**
-━━━━━━━━━━━━━━━━━━
-👥 Total Users: {stats['total_users']}
-🔍 Total Searches: {stats['total_searches']}
-💎 Total Credits: {stats['total_credits']}
-━━━━━━━━━━━━━━━━━━
-    """)
+╔══════════════════════════════╗
+║     📊 𝗕𝗢𝗧 𝗦𝗧𝗔𝗧𝗜𝗦𝗧𝗜𝗖𝗦 📊      ║
+╠══════════════════════════════╣
+║ 👥 𝗧𝗼𝘁𝗮𝗹 𝗨𝘀𝗲𝗿𝘀 : {stats['total_users']}
+║ 🔍 𝗧𝗼𝘁𝗮𝗹 𝗦𝗲𝗮𝗿𝗰𝗵𝗲𝘀 : {stats['total_searches']}
+║ 💎 𝗧𝗼𝘁𝗮𝗹 𝗖𝗿𝗲𝗱𝗶𝘁𝘀 : {stats['total_credits']}
+╚══════════════════════════════╝
+    """, parse_mode=ParseMode.MARKDOWN)
 
 async def broadcast_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id not in ADMIN_IDS:
         return
     
     if not context.args:
-        await update.message.reply_text("Usage: /broadcast <message>")
+        await update.message.reply_text("📢 **Usage:** `/broadcast <message>`\n\nExample: `/broadcast Hello everyone!`", parse_mode=ParseMode.MARKDOWN)
         return
     
     message = ' '.join(context.args)
     users = db.get_all_users()
     success = 0
     
-    status = await update.message.reply_text("📡 Broadcasting...")
+    status = await update.message.reply_text("📡 **Broadcasting...**\n\n┌─────────────────────┐\n│ Sending messages... │\n└─────────────────────┘", parse_mode=ParseMode.MARKDOWN)
     
     for user_id, username, first_name, credits, searches, is_banned in users:
         if is_banned == 0:
             try:
-                await context.bot.send_message(user_id, f"📢 **Broadcast**\n\n{message}", parse_mode=ParseMode.MARKDOWN)
+                await context.bot.send_message(user_id, f"📢 **𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧 𝗠𝗘𝗦𝗦𝗔𝗚𝗘**\n\n{message}", parse_mode=ParseMode.MARKDOWN)
                 success += 1
                 await asyncio.sleep(0.05)
             except:
                 pass
     
-    await status.edit_text(f"✅ Broadcast sent to {success} users")
+    await status.edit_text(f"✅ **Broadcast Complete!**\n\n📨 Sent to `{success}` users", parse_mode=ParseMode.MARKDOWN)
 
 async def give_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id not in ADMIN_IDS:
         return
     
     if len(context.args) != 2:
-        await update.message.reply_text("Usage: /give <user_id> <amount>")
+        await update.message.reply_text("➕ **Usage:** `/give <user_id> <amount>`\n\nExample: `/give 123456789 10`", parse_mode=ParseMode.MARKDOWN)
         return
     
     target_user = int(context.args[0])
     amount = int(context.args[1])
     
     db.give_credits(target_user, amount)
-    await update.message.reply_text(f"✅ Added {amount} credits to user {target_user}")
+    await update.message.reply_text(f"✅ **Credits Added!**\n\n➕ `{amount}` credits added to user `{target_user}`", parse_mode=ParseMode.MARKDOWN)
 
 async def cut_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id not in ADMIN_IDS:
         return
     
     if len(context.args) != 2:
-        await update.message.reply_text("Usage: /cut <user_id> <amount>")
+        await update.message.reply_text("➖ **Usage:** `/cut <user_id> <amount>`\n\nExample: `/cut 123456789 5`", parse_mode=ParseMode.MARKDOWN)
         return
     
     target_user = int(context.args[0])
     amount = int(context.args[1])
     
     db.cut_credits(target_user, amount)
-    await update.message.reply_text(f"✅ Removed {amount} credits from user {target_user}")
+    await update.message.reply_text(f"✅ **Credits Removed!**\n\n➖ `{amount}` credits removed from user `{target_user}`", parse_mode=ParseMode.MARKDOWN)
 
 async def ban_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id not in ADMIN_IDS:
         return
     
     if not context.args:
-        await update.message.reply_text("Usage: /ban <user_id>")
+        await update.message.reply_text("🔨 **Usage:** `/ban <user_id>`\n\nExample: `/ban 123456789`", parse_mode=ParseMode.MARKDOWN)
         return
     
     target_user = int(context.args[0])
     db.ban_user(target_user)
-    await update.message.reply_text(f"✅ User {target_user} banned")
+    await update.message.reply_text(f"✅ **User Banned!**\n\n🔨 User `{target_user}` has been banned.", parse_mode=ParseMode.MARKDOWN)
 
 async def unban_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id not in ADMIN_IDS:
         return
     
     if not context.args:
-        await update.message.reply_text("Usage: /unban <user_id>")
+        await update.message.reply_text("🔓 **Usage:** `/unban <user_id>`\n\nExample: `/unban 123456789`", parse_mode=ParseMode.MARKDOWN)
         return
     
     target_user = int(context.args[0])
     db.unban_user(target_user)
-    await update.message.reply_text(f"✅ User {target_user} unbanned")
+    await update.message.reply_text(f"✅ **User Unbanned!**\n\n🔓 User `{target_user}` has been unbanned.", parse_mode=ParseMode.MARKDOWN)
 
-# ============ NEW ADMIN PANEL ============
+# ============ NEW ADMIN PANEL (Enhanced UI) ============
 
 # Admin Panel Command
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -675,125 +703,127 @@ async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Check if user is admin
     if user_id not in ADMIN_IDS:
-        await update.message.reply_text("❌ **Access Denied!**\n\nYou are not authorized to use this panel.", parse_mode=ParseMode.MARKDOWN)
+        await update.message.reply_text("🚫 **Access Denied!**\n\nYou are not authorized to use this panel.", parse_mode=ParseMode.MARKDOWN)
         return
     
-    # Admin Panel Keyboard
+    # Admin Panel Keyboard - Enhanced
     admin_keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📊 STATISTICS", callback_data="admin_stats")],
-        [InlineKeyboardButton("📢 BROADCAST", callback_data="admin_broadcast")],
-        [InlineKeyboardButton("➕ GIVE CREDITS", callback_data="admin_give")],
-        [InlineKeyboardButton("➖ CUT CREDITS", callback_data="admin_cut")],
-        [InlineKeyboardButton("🔨 BAN USER", callback_data="admin_ban")],
-        [InlineKeyboardButton("🔓 UNBAN USER", callback_data="admin_unban")],
-        [InlineKeyboardButton("📜 USER LIST", callback_data="admin_users")],
-        [InlineKeyboardButton("❌ CLOSE", callback_data="admin_close")]
+        [InlineKeyboardButton("📊 𝗦𝗧𝗔𝗧𝗜𝗦𝗧𝗜𝗖𝗦", callback_data="admin_stats")],
+        [InlineKeyboardButton("📢 𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧", callback_data="admin_broadcast")],
+        [InlineKeyboardButton("➕ 𝗚𝗜𝗩𝗘 𝗖𝗥𝗘𝗗𝗜𝗧𝗦", callback_data="admin_give")],
+        [InlineKeyboardButton("➖ 𝗖𝗨𝗧 𝗖𝗥𝗘𝗗𝗜𝗧𝗦", callback_data="admin_cut")],
+        [InlineKeyboardButton("🔨 𝗕𝗔𝗡 𝗨𝗦𝗘𝗥", callback_data="admin_ban")],
+        [InlineKeyboardButton("🔓 𝗨𝗡𝗕𝗔𝗡 𝗨𝗦𝗘𝗥", callback_data="admin_unban")],
+        [InlineKeyboardButton("📜 𝗨𝗦𝗘𝗥 𝗟𝗜𝗦𝗧", callback_data="admin_users")],
+        [InlineKeyboardButton("❌ 𝗖𝗟𝗢𝗦𝗘", callback_data="admin_close")]
     ])
     
     text = """
-👑 **ADMIN PANEL**
-
-━━━━━━━━━━━━━━━━━━
-Welcome to Admin Control Panel!
-
-Select an option below:
-━━━━━━━━━━━━━━━━━━
+╔══════════════════════════════╗
+║      👑 𝗔𝗗𝗠𝗜𝗡 𝗣𝗔𝗡𝗘𝗟 👑        ║
+╠══════════════════════════════╣
+║  Welcome to Admin Control    ║
+║  Panel! Select an option     ║
+║  below to manage the bot.    ║
+╚══════════════════════════════╝
     """
     
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=admin_keyboard)
 
-# Admin Callback Handlers
+# Admin Callback Handlers - Enhanced
 async def admin_stats_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     if query.from_user.id not in ADMIN_IDS:
-        await query.message.reply_text("❌ Access Denied!")
+        await query.message.reply_text("🚫 Access Denied!")
         return
     
     stats = db.get_statistics()
     await query.message.reply_text(f"""
-📊 **BOT STATISTICS**
-━━━━━━━━━━━━━━━━━━
-👥 Total Users: {stats['total_users']}
-🔍 Total Searches: {stats['total_searches']}
-💎 Total Credits: {stats['total_credits']}
-━━━━━━━━━━━━━━━━━━
-    """)
+╔══════════════════════════════╗
+║     📊 𝗕𝗢𝗧 𝗦𝗧𝗔𝗧𝗜𝗦𝗧𝗜𝗖𝗦 📊      ║
+╠══════════════════════════════╣
+║ 👥 𝗧𝗼𝘁𝗮𝗹 𝗨𝘀𝗲𝗿𝘀 : {stats['total_users']}
+║ 🔍 𝗧𝗼𝘁𝗮𝗹 𝗦𝗲𝗮𝗿𝗰𝗵𝗲𝘀 : {stats['total_searches']}
+║ 💎 𝗧𝗼𝘁𝗮𝗹 𝗖𝗿𝗲𝗱𝗶𝘁𝘀 : {stats['total_credits']}
+╚══════════════════════════════╝
+    """, parse_mode=ParseMode.MARKDOWN)
 
 async def admin_broadcast_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     if query.from_user.id not in ADMIN_IDS:
-        await query.message.reply_text("❌ Access Denied!")
+        await query.message.reply_text("🚫 Access Denied!")
         return
     
     context.user_data['admin_action'] = 'broadcast'
-    await query.message.reply_text("📢 **Send me the message to broadcast:**\n\n(Reply to this message with your broadcast text)", parse_mode=ParseMode.MARKDOWN)
+    await query.message.reply_text("📢 **Send me the message to broadcast:**\n\n(Reply to this message with your broadcast text)\n\n💡 Tip: You can use Markdown formatting.", parse_mode=ParseMode.MARKDOWN)
 
 async def admin_give_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     if query.from_user.id not in ADMIN_IDS:
-        await query.message.reply_text("❌ Access Denied!")
+        await query.message.reply_text("🚫 Access Denied!")
         return
     
     context.user_data['admin_action'] = 'give'
-    await query.message.reply_text("➕ **Give Credits**\n\nSend: `/give user_id amount`\n\nExample: `/give 123456789 10`", parse_mode=ParseMode.MARKDOWN)
+    await query.message.reply_text("➕ **Give Credits**\n\nSend: `/give user_id amount`\n\nExample: `/give 123456789 10`\n\n📌 Replace with actual user ID and amount.", parse_mode=ParseMode.MARKDOWN)
 
 async def admin_cut_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     if query.from_user.id not in ADMIN_IDS:
-        await query.message.reply_text("❌ Access Denied!")
+        await query.message.reply_text("🚫 Access Denied!")
         return
     
     context.user_data['admin_action'] = 'cut'
-    await query.message.reply_text("➖ **Cut Credits**\n\nSend: `/cut user_id amount`\n\nExample: `/cut 123456789 5`", parse_mode=ParseMode.MARKDOWN)
+    await query.message.reply_text("➖ **Cut Credits**\n\nSend: `/cut user_id amount`\n\nExample: `/cut 123456789 5`\n\n📌 Replace with actual user ID and amount.", parse_mode=ParseMode.MARKDOWN)
 
 async def admin_ban_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     if query.from_user.id not in ADMIN_IDS:
-        await query.message.reply_text("❌ Access Denied!")
+        await query.message.reply_text("🚫 Access Denied!")
         return
     
     context.user_data['admin_action'] = 'ban'
-    await query.message.reply_text("🔨 **Ban User**\n\nSend: `/ban user_id`\n\nExample: `/ban 123456789`", parse_mode=ParseMode.MARKDOWN)
+    await query.message.reply_text("🔨 **Ban User**\n\nSend: `/ban user_id`\n\nExample: `/ban 123456789`\n\n📌 Replace with actual user ID.", parse_mode=ParseMode.MARKDOWN)
 
 async def admin_unban_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     if query.from_user.id not in ADMIN_IDS:
-        await query.message.reply_text("❌ Access Denied!")
+        await query.message.reply_text("🚫 Access Denied!")
         return
     
     context.user_data['admin_action'] = 'unban'
-    await query.message.reply_text("🔓 **Unban User**\n\nSend: `/unban user_id`\n\nExample: `/unban 123456789`", parse_mode=ParseMode.MARKDOWN)
+    await query.message.reply_text("🔓 **Unban User**\n\nSend: `/unban user_id`\n\nExample: `/unban 123456789`\n\n📌 Replace with actual user ID.", parse_mode=ParseMode.MARKDOWN)
 
 async def admin_users_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     if query.from_user.id not in ADMIN_IDS:
-        await query.message.reply_text("❌ Access Denied!")
+        await query.message.reply_text("🚫 Access Denied!")
         return
     
     users = db.get_all_users()
     if users:
-        text = "📜 **USER LIST**\n━━━━━━━━━━━━━━━━━━\n"
+        text = "╔══════════════════════════════╗\n║      📜 𝗨𝗦𝗘𝗥 𝗟𝗜𝗦𝗧 📜         ║\n╠══════════════════════════════╣\n"
         for user_id, username, first_name, credits, searches, is_banned in users[:20]:
             status = "🚫 BANNED" if is_banned else "✅ ACTIVE"
-            name = f"@{username}" if username else first_name
-            text += f"ID: `{user_id}`\n👤 {name}\n💎 {credits} | 🔍 {searches}\n{status}\n━━━━━━━━━━━━━━━━━━\n"
+            name = f"@{username}" if username else first_name[:15]
+            text += f"║ 🆔 `{user_id}`\n║ 👤 {name}\n║ 💎 {credits} | 🔍 {searches}\n║ {status}\n╠══════════════════════════════╣\n"
+        text += "╚══════════════════════════════╝\n\n📌 Showing first 20 users."
         await query.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
     else:
-        await query.message.reply_text("No users found!")
+        await query.message.reply_text("📭 No users found in database!", parse_mode=ParseMode.MARKDOWN)
 
 async def admin_close_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -816,25 +846,25 @@ async def handle_admin_input(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if action == 'broadcast':
         users = db.get_all_users()
         success = 0
-        status_msg = await update.message.reply_text("📡 Broadcasting...")
+        status_msg = await update.message.reply_text("📡 **Broadcasting...**\n\n┌─────────────────────┐\n│ Sending messages... │\n└─────────────────────┘", parse_mode=ParseMode.MARKDOWN)
         
         for user_id, username, first_name, credits, searches, is_banned in users:
             if is_banned == 0:
                 try:
-                    await context.bot.send_message(user_id, f"📢 **Broadcast**\n\n{message_text}", parse_mode=ParseMode.MARKDOWN)
+                    await context.bot.send_message(user_id, f"📢 **𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧 𝗠𝗘𝗦𝗦𝗔𝗚𝗘**\n\n{message_text}", parse_mode=ParseMode.MARKDOWN)
                     success += 1
                     await asyncio.sleep(0.05)
                 except:
                     pass
         
-        await status_msg.edit_text(f"✅ Broadcast sent to {success} users")
+        await status_msg.edit_text(f"✅ **Broadcast Complete!**\n\n📨 Sent to `{success}` users", parse_mode=ParseMode.MARKDOWN)
         context.user_data.pop('admin_action', None)
 
 # Error handler
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.error(f"Error: {context.error}")
     if update and update.effective_message:
-        await update.effective_message.reply_text("⚠️ An error occurred. Please try again later.")
+        await update.effective_message.reply_text("⚠️ **An error occurred!**\n\nPlease try again later or contact support.", parse_mode=ParseMode.MARKDOWN)
 
 # Main
 async def main():
@@ -842,7 +872,7 @@ async def main():
     
     # Commands
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("admin", admin_panel))  # NEW ADMIN PANEL COMMAND
+    app.add_handler(CommandHandler("admin", admin_panel))
     app.add_handler(CommandHandler("stats", stats_command))
     app.add_handler(CommandHandler("broadcast", broadcast_command))
     app.add_handler(CommandHandler("give", give_command))
@@ -881,7 +911,7 @@ async def main():
     await app.start()
     
     bot_info = await app.bot.get_me()
-    print(f"🤖 Bot is running...")
+    print("🤖 Bot is running...")
     print(f"📍 Bot username: @{bot_info.username}")
     print(f"📢 Channel: {CHANNEL_USERNAME}")
     print(f"👑 Admin ID: {ADMIN_IDS[0]}")
